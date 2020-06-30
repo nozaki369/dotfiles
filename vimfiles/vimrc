@@ -1,0 +1,213 @@
+set nocompatible
+set nobackup
+behave mswin
+set encoding=utf-8
+set fileencodings=cp932,utf-8
+
+syntax on
+filetype plugin indent on
+
+
+if has("win32") || has("win64")
+	let s:plug_dir = $HOME . '\vimfiles\plugged'
+else
+	let s:plug_dir = '~/.vim/plugged'
+endif
+
+if v:version < 800
+	runtime macros/matchit.vim
+else
+	packadd! matchit
+endif
+
+autocmd QuickFixCmdPost *grep* cwindow
+
+" Enable to yank to clipboard on WSL
+if system('uname -a | grep Microsoft') != ''
+	augroup myYank
+		autocmd!
+		autocmd TextYankPost * :call system('clip.exe', @")
+	augroup END
+endif
+
+if has('gui_running')
+	set guioptions-=a guioptions-=i
+	set guioptions-=r guioptions-=L
+	set guioptions-=e guioptions-=m guioptions+=M guioptions-=t guioptions-=T guioptions-=g
+	set guioptions+=c
+endif
+
+let mapleader = "\<Space>"
+
+set bg=dark
+
+set ruler
+set backspace=indent,eol,start
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set showmatch
+set matchtime=2
+set pumheight=10
+set display=lastline
+set wildmenu
+set cursorline
+set statusline=2
+set hidden
+set foldmethod=syntax
+set foldlevel=3
+ 
+call plug#begin(s:plug_dir)
+Plug 'hari-rangarajan/CCTree'
+let g:CCTreeRecursiveDepth=4
+
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+
+Plug 'kana/vim-operator-user'
+Plug 'rhysd/vim-operator-surround'
+
+"Plug 'kana/vim-textobj-line'
+"Plug 'kana/vim-textobj-indent'
+"Plug 'kana/vim-textobj-entire'
+
+Plug 'tpope/vim-repeat'
+
+Plug 't9md/vim-quickhl'
+
+"Plug 'vhda/verilog_systemverilog.vim'
+
+Plug 'aklt/plantuml-syntax'
+
+Plug 'crusoexia/vim-monokai'
+"Plug 'KabbAmine/yowish.vim'
+"Plug 'josuegaleas/jay'
+
+Plug 'thinca/vim-quickrun'
+
+call plug#end()
+
+colorscheme monokai
+"colorscheme yowish
+"colorscheme jay
+
+nnoremap <c-]> g<c-]>
+nnoremap ' `
+nnoremap ` ' 
+
+nnoremap Y y$
+
+nnoremap <F6> :e $MYVIMRC<CR>
+nnoremap <F7> :so $MYVIMRC<CR>
+
+"Enable history search
+cnoremap <c-p> <up>
+cnoremap <c-n> <down>
+" and other command line key mappings
+cnoremap <c-a> <home>
+cnoremap <c-e> <end>
+cnoremap <c-b> <left>
+cnoremap <c-f> <right>
+cnoremap <c-d> <del>
+
+" Settings for cscope
+if filereadable("cscope.out")
+	:cs add cscope.out
+	nnoremap <silent> <Leader>[ :<C-U>cs f c <C-R><C-W><CR>
+	nnoremap <silent> <Leader>] :<C-U>cs f g <C-R><C-W><CR>
+	nnoremap <silent> <Leader>= :<C-U>cs f s <C-R><C-W><CR>
+endif
+
+nmap <Leader>a <Plug>(operator-surround-append)
+nmap <Leader>d <Plug>(operator-surround-delete)
+nmap <Leader>r <Plug>(operator-surround-replace)
+
+nmap <Leader>h <Plug>(quickhl-manual-this)
+xmap <Leader>h <Plug>(quickhl-manual-this)
+nmap <Leader>H <Plug>(quickhl-manual-reset)
+xmap <Leader>H <Plug>(quickhl-manual-reset)
+
+vnoremap <Leader>y "+y
+vnoremap <Leader>d "+d
+nnoremap <Leader>p "+p
+nnoremap <Leader>P "+P
+vnoremap <Leader>p "+p
+vnoremap <Leader>P "+P
+
+"Edit contents of register
+nnoremap <leader>R  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr><c-f><left>
+
+nnoremap <Leader><Space> <C-F>
+nnoremap <Leader>b <C-B>
+
+function! LessMode()
+  if g:lessmode == 0
+    let g:lessmode = 1
+    let onoff = 'on'
+    " Scroll a page down
+    noremap <script> <Space> <C-F>
+    " Scroll half a page down
+    noremap <script> d <C-D>
+    " Scroll one line down
+    noremap <script> j <C-E>
+    " Scroll a page up
+    noremap <script> b <C-B>
+    " Scroll half a page up
+    noremap <script> u <C-U>
+    " Scroll one line up
+    noremap <script> k <C-Y>
+  else
+    let g:lessmode = 0
+    let onoff = 'off'
+    unmap <Space>
+    unmap d
+    unmap j
+    unmap b
+    unmap u
+    unmap k
+  endif
+  echohl Label | echo "Less mode" onoff | echohl None
+endfunction
+let g:lessmode = 0
+"nnoremap <F5> :call LessMode()<CR>
+"inoremap <F5> <Esc>:call LessMode()<CR>
+
+" Dictionary of input keys
+let s:compl_key_dict = {
+      \ char2nr("\<C-l>"): "\<C-x>\<C-l>",
+      \ char2nr("\<C-n>"): "\<C-x>\<C-n>",
+      \ char2nr("\<C-p>"): "\<C-x>\<C-p>",
+      \ char2nr("\<C-k>"): "\<C-x>\<C-k>",
+      \ char2nr("\<C-t>"): "\<C-x>\<C-t>",
+      \ char2nr("\<C-i>"): "\<C-x>\<C-i>",
+      \ char2nr("\<C-]>"): "\<C-x>\<C-]>",
+      \ char2nr("\<C-f>"): "\<C-x>\<C-f>",
+      \ char2nr("\<C-d>"): "\<C-x>\<C-d>",
+      \ char2nr("\<C-v>"): "\<C-x>\<C-v>",
+      \ char2nr("\<C-u>"): "\<C-x>\<C-u>",
+      \ char2nr("\<C-o>"): "\<C-x>\<C-o>",
+      \ char2nr('s'): "\<C-x>s",
+      \ char2nr("\<C-s>"): "\<C-x>s"
+      \}
+" Hint Messages
+let s:hint_i_ctrl_x_msg = join([
+      \ '<C-l>: While lines',
+      \ '<C-n>: keywords in the current file',
+      \ "<C-k>: keywords in 'dictionary'",
+      \ "<C-t>: keywords in 'thesaurus'",
+      \ '<C-i>: keywords in the current and included files',
+      \ '<C-]>: tags',
+      \ '<C-f>: file names',
+      \ '<C-d>: definitions or macros',
+      \ '<C-v>: Vim command-line',
+      \ "<C-u>: User defined completion ('completefunc')",
+      \ "<C-o>: omni completion ('omnifunc')",
+      \ "s: Spelling suggestions ('spell')"
+      \], "\n")
+function! s:hint_i_ctrl_x() abort
+  echo s:hint_i_ctrl_x_msg
+  let c = getchar()
+  return get(s:compl_key_dict, c, nr2char(c))
+endfunction
+noremap <expr> <C-x>  <SID>hint_i_ctrl_x()

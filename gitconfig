@@ -1,0 +1,23 @@
+[user]
+	name = Hajime Nozaki
+	email = nozaki369@outlook.jp
+
+[core]
+	editor = vim
+
+[alias]
+	l	= log --oneline --abbrev-commit --abbrev=4 -25
+
+	days	= "!days() { git log --pretty=format:%cd --date=short | uniq; }; days"
+
+	stat	= "!stat() { echo -n Number of revisions:; git log --oneline | wc -l; echo -n Number of developers:; git shortlog -s | wc -l; echo -n Number of days:; git days | wc -l; echo -n The working directory:; du -h -s --exclude=.git; echo -n The git directory:; du -h -s .git; echo -n Number of files in the working dir:; git ls-files | wc -l; }; stat"
+
+	snapshot = "!snapshot() { COMMENT=wip; if [ \"$*\" ]; then COMMENT=\"$*\"; fi; git add -A; git commit -m \"$COMMENT\"; }; snapshot"
+	s = status -sb
+	create-file = "!createfile() { for name in \"$@\"; do echo $name>$name.txt; done; }; createfile"
+	simple-commit = "!simpleCommit() { for name in \"$@\"; do git create-file \"$name\"; git snapshot $name; done; }; simpleCommit"
+	graph = log --oneline --graph --decorate
+
+	list-remote-branches = "!listRemoteBranches() { git branch -r | sed \"/->/d; s/ origin\\///g\"; }; listRemoteBranches"
+	checkout-remote-branches = "!checkoutRemoteBranches() { for name in `git list-remote-branches`; do git checkout $name; done; }; checkoutRemoteBranches"
+	clone-with-branches = "!cloneWithBranches() { git clone $1 $2; cd $2; git checkout-remote-branches; git remote rm origin; }; cloneWithBranches"
