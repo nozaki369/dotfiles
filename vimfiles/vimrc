@@ -86,6 +86,8 @@ Plug 'crusoexia/vim-monokai'
 
 Plug 'thinca/vim-quickrun'
 
+Plug 'rust-lang/rust.vim'
+
 call plug#end()
 
 colorscheme monokai
