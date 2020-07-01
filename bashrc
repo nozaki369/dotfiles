@@ -117,4 +117,6 @@ if ! shopt -oq posix; then
 fi
 umask 003
 export DISPLAY=localhost:0.0
-source ~/qmk_utils/activate_wsl.sh
+if [ -f ~/qmk_utils/activate_wsl.sh ]; then
+	source ~/qmk_utils/activate_wsl.sh
+fi
