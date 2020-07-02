@@ -9,7 +9,9 @@
 ; Razer Synapseなど、キーカスタマイズ系のツールを併用しているときのエラー対策
 #MaxHotkeysPerInterval 350
 
-#Include vim.ahk
+#Include IME.ahk
+#Include Spacefn.ahk
+;#Include vim.ahk
 
 ; 上部メニューがアクティブになるのを抑制
 *~LAlt::Send {Blind}{vk07}
@@ -19,7 +21,7 @@
 LAlt up::
    if (A_PriorHotkey == "*~LAlt") 
    {
-       VIM_IME_SET(0)
+       IME_SET(0)
    }
    Return
 
@@ -27,7 +29,7 @@ LAlt up::
 RAlt up::
    if (A_PriorHotkey == "*~RAlt")
    {
-       VIM_IME_SET(1)
+       IME_SET(1)
    }
    Return
 
