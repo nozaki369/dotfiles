@@ -20,8 +20,6 @@ else
 	packadd! matchit
 endif
 
-autocmd QuickFixCmdPost *grep* cwindow
-
 " Enable to yank to clipboard on WSL
 if system('uname -a | grep Microsoft') != ''
 	augroup myYank
@@ -29,6 +27,8 @@ if system('uname -a | grep Microsoft') != ''
 		autocmd TextYankPost * :call system('clip.exe', @")
 	augroup END
 endif
+
+autocmd QuickFixCmdPost make,*grep* cwindow
 
 if has('gui_running')
 	set guioptions-=a guioptions-=i
@@ -87,6 +87,8 @@ Plug 'crusoexia/vim-monokai'
 Plug 'thinca/vim-quickrun'
 
 Plug 'rust-lang/rust.vim'
+
+Plug 'aklt/plantuml-syntax'
 
 call plug#end()
 
